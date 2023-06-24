@@ -15,6 +15,7 @@ from pyfiglet import Figlet
 from rich import print as rprint
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
 
 from prpr.homework import Homework
 
@@ -185,18 +186,22 @@ def _configure_firefox_driver(browser_settings, headless=False):
 
 
 def get_zip_urls(driver, revisor_url: str) -> list[str]:
-    logger.debug(f"Fetching from {revisor_url}...")
     with driver:
         return _get_zip_urls(driver, revisor_url)
 
 
 def _get_zip_urls(driver, revisor_url: str) -> list[str]:
+    logger.debug(f"Fetching from {revisor_url}...")
     page_load_timeout = PAGE_LOAD_TIMEOUT
     driver.maximize_window()
     driver.set_page_load_timeout(page_load_timeout)
     driver.get(revisor_url)
     try:
         element = driver.find_element_by_xpath(HISTORY_TAB_XPATH)
+        # The simple `element.click()` solution has stopped working on 19.05.2023.
+        # I dunno why, but this more complex approach is working.
+        action = ActionChains(driver)
+        action.move_to_element(element).click().perform()
     except NoSuchElementException:
         logger.debug(f"Element with XPath='{HISTORY_TAB_XPATH}' not found, trying XPath='{REVIEW_TAB_XPATH}'...")
         try:
