@@ -10,7 +10,8 @@
 
 ### Dotfile
 
-В `~/.prpr.yaml` нужно положить токен доступа к Стартреку.
+`.prpr-example.yaml` нужно скопировать в `~/.prpr.yaml` и адаптировать на свой вкус.
+Туда точно нужно положить токен доступа к Стартреку.
 
 Также можно определить первое число для начала месяца расчёта зарплаты и
 определить суффиксы для уточнения когорт (в зависимости от курса):
@@ -18,7 +19,7 @@
 ```yaml
 startrek_token: your_token_here
 # Optional:
-free_work_owner: lepervushina  # owner of unassigned (free) tickets
+free_work_owner: robot-botlegger  # owner of unassigned (free) tickets
 month_start: 16  # Meaning closed tickets are grouped by May 16-June 15, June 16-July 16 and so on.
 component_suffixes:  # suffixes for cohort definition according to course
   backend-developer: ''
@@ -259,6 +260,12 @@ process:
 ```
 
 ## История изменений
+
+### 2023-07-04
+
+* Разрешен баг, когда не скачивались новые работы в "Убунту" 22.04: #2
+* Разнесены пример конфига и собственно конфиг (иначе конфиг иногда пытался закоммитится).
+* Работы из банка теперь на другой учетке: robot-botlegger . Обновили настройки.
 
 ### 2022-06-29
 
