@@ -198,10 +198,6 @@ def _get_zip_urls(driver, revisor_url: str) -> list[str]:
     driver.get(revisor_url)
     try:
         element = driver.find_element_by_xpath(HISTORY_TAB_XPATH)
-        # The simple `element.click()` solution has stopped working on 19.05.2023.
-        # I dunno why, but this more complex approach is working.
-        action = ActionChains(driver)
-        action.move_to_element(element).click().perform()
     except NoSuchElementException:
         logger.debug(f"Element with XPath='{HISTORY_TAB_XPATH}' not found, trying XPath='{REVIEW_TAB_XPATH}'...")
         try:
@@ -211,7 +207,9 @@ def _get_zip_urls(driver, revisor_url: str) -> list[str]:
                 f"Failed to find element with XPath='{REVIEW_TAB_XPATH}'. Are you logged in? Is the VPN connected?"
             )
             sys.exit(1)
-    element.click()
+    # Simple element.click() doesn't work here for some reason.
+    action = ActionChains(driver)
+    action.move_to_element(element).click().perform()
     driver.implicitly_wait(DRIVER_TIMEOUT)
     return _extract_zip_urls(driver.page_source, revisor_url)
 
