@@ -15,6 +15,7 @@ from pyfiglet import Figlet
 from rich import print as rprint
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
 
 from prpr.homework import Homework
 
@@ -185,12 +186,12 @@ def _configure_firefox_driver(browser_settings, headless=False):
 
 
 def get_zip_urls(driver, revisor_url: str) -> list[str]:
-    logger.debug(f"Fetching from {revisor_url}...")
     with driver:
         return _get_zip_urls(driver, revisor_url)
 
 
 def _get_zip_urls(driver, revisor_url: str) -> list[str]:
+    logger.debug(f"Fetching from {revisor_url}...")
     page_load_timeout = PAGE_LOAD_TIMEOUT
     driver.maximize_window()
     driver.set_page_load_timeout(page_load_timeout)
@@ -206,7 +207,9 @@ def _get_zip_urls(driver, revisor_url: str) -> list[str]:
                 f"Failed to find element with XPath='{REVIEW_TAB_XPATH}'. Are you logged in? Is the VPN connected?"
             )
             sys.exit(1)
-    element.click()
+    # Simple element.click() doesn't work here for some reason.
+    action = ActionChains(driver)
+    action.move_to_element(element).click().perform()
     driver.implicitly_wait(DRIVER_TIMEOUT)
     return _extract_zip_urls(driver.page_source, revisor_url)
 
