@@ -242,6 +242,7 @@ process:
             # it_last -- the absolute path of the last iteration directory,
             # it_last_ -- the path of the last iteration directory relative to the homework directory,
             # it_last_zip and it_last_zip_ are similar, but point to zip files,
+            # it_last_number -- the number of the current iteration,
             # it_prev, it_prev_ and so on refer to the corresponding counterparts for the previous iteration.
             # if it_prev, it_prev_... are present the step is skipped for the first iteration.
             diff: "cd {hw} && diff -r -N {it_prev_} {it_last_}"
@@ -260,6 +261,11 @@ process:
 ```
 
 ## История изменений
+
+### 2023-07-12
+
+* Добавлена переменная с номером текущей итерации. Теперь его можно пробросить в вызываемые команды,
+  например в авто-ревьювер.
 
 ### 2023-07-04
 

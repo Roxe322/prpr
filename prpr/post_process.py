@@ -90,6 +90,7 @@ def _interpolate(command_template: str, result_last: DownloadedResult) -> str:
             "{it_last_}": str(result_last.iteration_directory_relative_to_homework_directory),
             "{it_last_zip}": str(result_last.zipfile),
             "{it_last_zip_}": str(result_last.zipfile_relative_to_homework_directory),
+            "{it_last_number}": str(result_last.iteration),
         },
     )
 
