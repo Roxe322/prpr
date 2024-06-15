@@ -21,7 +21,12 @@ def print_issue_table(homeworks: list[Homework], last=None, last_processed=None,
     for table_number, homework in enumerate(homeworks[start_from:], 1):
         row_columns = (  # TODO: Move to Homework
             str(table_number),
-            homework.issue_url,
+            homework.issue_url
+            + (
+                "\n" + homework.lesson_name + "\n"
+                if homework.lesson_name
+                else ""
+            ),
             str(homework.number),
             str(homework.problem),
             homework.iteration and str(homework.iteration),

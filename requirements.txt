@@ -10,4 +10,4 @@ requests_cache==0.9.4
 rich==10.1.0
 selenium==3.141.0
 transliterate==1.10.2
-yandex_tracker_client==1.9
+yandex_tracker_client==2.3
