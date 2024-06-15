@@ -48,6 +48,7 @@ class PraktikTrackerClient(TrackerClient):
         return {
             "queue": "PCR",
             "assignee": user or "me()",
+            "status": ("onTheSideOfUser", "open", "inReview",),
         }
 
     def get_issues(self, user: Optional[str] = None):
