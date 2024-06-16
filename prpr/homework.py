@@ -53,6 +53,7 @@ class Homework:
     def __init__(
         self,
         issue_key: str,  # e.g. "PCR-12345"
+        lesson_name: str,  # e.g. "Финальное задание спринта: служба доставки"
         summary: str,  # e.g. "[1] Даниил Хармс (yuvachev@yandex.ru)"
         cohort: str,  # e.g. "16", "1+"
         status: str,  # e.g. "open"
@@ -63,6 +64,7 @@ class Homework:
         transitions: Optional[list[StatusTransition]] = None,
     ):
         self.number = number
+        self.lesson_name = self._extract_lesson_name(lesson_name)
         self.status_updated = parse_datetime(status_updated)
         self.description = description
         problem, student = self._extract_problem_and_student(summary)
@@ -74,6 +76,15 @@ class Homework:
         self.course = course
         self._iteration: Optional[int] = StatusTransition.compute_iteration(transitions)
         self.last_opened: Optional[datetime] = StatusTransition.compute_last_opened(transitions)
+
+
+    @staticmethod
+    def _extract_lesson_name(lesson_name):
+        pattern = r'спринта: (.+)$'
+        match = re.search(pattern, lesson_name)
+        if match:
+            return match.group(1)
+        return lesson_name
 
     @property
     def iteration(self):

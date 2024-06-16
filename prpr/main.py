@@ -85,6 +85,7 @@ def main():
             Homework(
                 issue_key=issue.key,
                 summary=issue.summary,
+                lesson_name=getattr(issue, "lesson_name", ""),
                 cohort=get_cohort(issue.cohort, issue.components, config),
                 status=issue.status.key,
                 status_updated=issue.statusStartTime,
