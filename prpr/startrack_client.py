@@ -9,6 +9,7 @@ from yandex_tracker_client.exceptions import TrackerClientError
 from yandex_tracker_client.objects import Resource
 
 from prpr.date_utils import parse_datetime
+from prpr.filters import FilterMode
 from prpr.homework import Homework, Status, StatusTransition
 
 YANDEX_ORG_ID = 0
@@ -44,15 +45,19 @@ class PraktikTrackerClient(TrackerClient):
         super().__init__(*args, connection=connection, **kwargs)
         self.token = kwargs["token"]
 
-    def _get_filter_expression(self, user: Optional[str] = None):
-        return {
+    def _get_filter_expression(self,  mode: FilterMode, user: Optional[str] = None):
+        filter_dict = {
             "queue": "PCR",
             "assignee": user or "me()",
         }
+        # Server-side filtration optimization for standard and open modes
+        if mode in {FilterMode.STANDARD, FilterMode.OPEN}:
+            filter_dict["status"] = ("onTheSideOfUser", "open", "inReview",)
+        return filter_dict
 
-    def get_issues(self, user: Optional[str] = None):
+    def get_issues(self, user: Optional[str] = None, mode: FilterMode = FilterMode.STANDARD):
         logger.debug("Fetching issues...")
-        issues = self.issues.find(filter=self._get_filter_expression(user))
+        issues = self.issues.find(filter=self._get_filter_expression(mode, user))
         sorted_issues = sorted(issues, key=by_issue_key)
         return sorted_issues
 

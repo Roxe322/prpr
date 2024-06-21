@@ -23,7 +23,7 @@ def print_issue_table(homeworks: list[Homework], last=None, last_processed=None,
             str(table_number),
             homework.issue_url
             + (
-                "\n" + homework.lesson_name + "\n"
+                "\n" + homework.lesson_name
                 if homework.lesson_name
                 else ""
             ),
