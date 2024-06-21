@@ -46,14 +46,14 @@ class PraktikTrackerClient(TrackerClient):
         self.token = kwargs["token"]
 
     def _get_filter_expression(self,  mode: FilterMode, user: Optional[str] = None):
-        filter_dict = {
+        server_side_filters = {
             "queue": "PCR",
             "assignee": user or "me()",
         }
         # Server-side filtration optimization for standard and open modes
         if mode in {FilterMode.STANDARD, FilterMode.OPEN}:
-            filter_dict["status"] = ("onTheSideOfUser", "open", "inReview",)
-        return filter_dict
+            server_side_filters["status"] = ("onTheSideOfUser", "open", "inReview",)
+        return server_side_filters
 
     def get_issues(self, user: Optional[str] = None, mode: FilterMode = FilterMode.STANDARD):
         logger.debug("Fetching issues...")
