@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import IntEnum
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Any
 
 from loguru import logger
 from transliterate import slugify
@@ -62,7 +62,7 @@ class Homework:
         number: int,  # the ordinal number in of all one's tickets sorted by issue key
         course: str,  # e.g. "backend-developer"
         transitions: Optional[list[StatusTransition]] = None,
-        sla: Optional[dict] = None,
+        sla: Optional[dict[str, Any]] = None,
     ):
         self.number = number
         self.lesson_name = self._extract_lesson_name(lesson_name)

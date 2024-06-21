@@ -4,7 +4,7 @@ from __future__ import annotations
 import sys
 import webbrowser
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 import questionary
 from loguru import logger
@@ -57,7 +57,7 @@ def choose_to_download(to_download: list[Homework]) -> Union[list[Homework], Int
     return [hw for hw in to_download if str(hw) == chosen_title]
 
 
-def _extract_sla_dict(issue) -> Optional[dict]:
+def _extract_sla_dict(issue: dict[str, Any]) -> Optional[dict[str, Any]]:
     sla_list = issue.sla and [sla_item for sla_item in issue.sla if sla_item['failAt'] is not None]
     return sla_list[-1] if sla_list else None
 
