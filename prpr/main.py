@@ -4,7 +4,7 @@ from __future__ import annotations
 import sys
 import webbrowser
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 
 import questionary
 from loguru import logger
@@ -57,6 +57,11 @@ def choose_to_download(to_download: list[Homework]) -> Union[list[Homework], Int
     return [hw for hw in to_download if str(hw) == chosen_title]
 
 
+def _extract_sla_dict(issue) -> Optional[dict]:
+    sla_list = issue.sla and [sla_item for sla_item in issue.sla if sla_item['failAt'] is not None]
+    return sla_list[-1] if sla_list else None
+
+
 def main():
     arg_parser = configure_arg_parser()
     args = arg_parser.parse_args()
@@ -93,6 +98,7 @@ def main():
                 number=number,
                 course=extract_course(issue),
                 transitions=client.get_status_history(issue),
+                sla=_extract_sla_dict(issue)
             )
             for number, issue in enumerate(issues, 1)
         ]
