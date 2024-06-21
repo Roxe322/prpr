@@ -84,7 +84,7 @@ def main():
     should_run = True
     last_processed = None
     while should_run:
-        issues = client.get_issues(user=user)
+        issues = client.get_issues(user=user, mode=args.mode)
         logger.debug(f"Got {len(issues)} homeworks.")
         homeworks = [
             Homework(
