@@ -224,7 +224,7 @@ class Homework:
 
     @staticmethod
     def order_key(homework: Homework) -> Tuple[int, datetime]:
-        return homework.status, homework.status_updated
+        return homework.status, homework.deadline
 
     @property
     def second_name_slug(self):
