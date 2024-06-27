@@ -4,6 +4,7 @@ from __future__ import annotations
 import sys
 import webbrowser
 from enum import Enum
+from operator import itemgetter
 from typing import Union, Optional, Any
 
 import questionary
@@ -58,7 +59,10 @@ def choose_to_download(to_download: list[Homework]) -> Union[list[Homework], Int
 
 
 def _extract_sla_dict(issue: dict[str, Any]) -> Optional[dict[str, Any]]:
-    sla_list = issue.sla and [sla_item for sla_item in issue.sla if sla_item['failAt'] is not None]
+    # 'settingsId' currently is 8126 for the actual SLA.
+    # To avoid its hardcoding let's simply find the maximal deadline.
+    deadline_getter = itemgetter('failAt')
+    sla_list = issue.sla and sorted(filter(deadline_getter, issue.sla), key=deadline_getter)
     return sla_list[-1] if sla_list else None
 
 
