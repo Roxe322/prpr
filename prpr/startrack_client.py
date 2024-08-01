@@ -49,7 +49,6 @@ class PraktikTrackerClient(TrackerClient):
         server_side_filters = {
             "queue": "PCR",
             "assignee": user or "me()",
-            "status": ("onTheSideOfUser", "open", "inReview",),
         }
         # Server-side filtration optimization for standard and open modes
         if mode in {FilterMode.STANDARD, FilterMode.OPEN}:
