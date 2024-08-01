@@ -23,11 +23,11 @@ def print_issue_table(homeworks: list[Homework], last=None, last_processed=None,
             str(table_number),
             homework.issue_url
             + (
-                "\n" + homework.lesson_name + "\n"
+                "\n" + "[green]" + homework.lesson_name
                 if homework.lesson_name
                 else ""
             ),
-            str(homework.number),
+            # str(homework.number), # TODO: Лишняя колонка если берем список только используемых работ с сервера
             str(homework.problem),
             homework.iteration and str(homework.iteration),
             homework.student,
@@ -58,11 +58,11 @@ def compute_style(homework: Homework, last_processed=None):  # TODO: consider mo
 
 
 def setup_table(homeworks: list[Homework], title: Optional[str] = None) -> Table:
-    table = Table(title=title, box=box.MINIMAL_HEAVY_HEAD)
-    table.add_column("#", justify="right")
+    table = Table(title=title, box=box.MINIMAL_HEAVY_HEAD,)
+    table.add_column("#", justify="right", style="green")
     min_ticket_width = max(len(hw.issue_url) for hw in homeworks) if homeworks else None
     table.add_column("ticket", min_width=min_ticket_width)
-    table.add_column("no", justify="right")
+    # table.add_column("no", justify="right") # TODO: Лишняя колонка если берем список только используемых работ с сервера
     table.add_column("pr", justify="right")
     table.add_column("i")
     table.add_column("student")
@@ -71,5 +71,10 @@ def setup_table(homeworks: list[Homework], title: Optional[str] = None) -> Table
     table.add_column("deadline", justify="right")
     table.add_column("left", justify="right")
     table.add_column("updated")
+    table.header_style = "yellow"  # Стиль текста в заголовке таблице (первой строке)
+    table.border_style = "dim blue"  # Стиль границ таблицы
+    table.title_style = "bold blue" # Стиль текста в заголовке таблицы, My Praktikum Review Tickets
+    table.pad_edge = False  # меньше расстояние между границами
+    # Другие стили тут https://rich.readthedocs.io/en/stable/tables.html#table-options
     # TODO: column count should always match tuple length; configure together.
     return table
