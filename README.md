@@ -10,7 +10,8 @@
 
 ### Dotfile
 
-В `~/.prpr.yaml` нужно положить токен доступа к Стартреку.
+`.prpr-example.yaml` нужно скопировать в `~/.prpr.yaml` и адаптировать на свой вкус.
+Туда точно нужно положить токен доступа к Стартреку.
 
 Также можно определить первое число для начала месяца расчёта зарплаты и
 определить суффиксы для уточнения когорт (в зависимости от курса):
@@ -18,7 +19,7 @@
 ```yaml
 startrek_token: your_token_here
 # Optional:
-free_work_owner: lepervushina  # owner of unassigned (free) tickets
+free_work_owner: robot-botlegger  # owner of unassigned (free) tickets
 month_start: 16  # Meaning closed tickets are grouped by May 16-June 15, June 16-July 16 and so on.
 component_suffixes:  # suffixes for cohort definition according to course
   backend-developer: ''
@@ -241,6 +242,7 @@ process:
             # it_last -- the absolute path of the last iteration directory,
             # it_last_ -- the path of the last iteration directory relative to the homework directory,
             # it_last_zip and it_last_zip_ are similar, but point to zip files,
+            # it_last_number -- the number of the current iteration,
             # it_prev, it_prev_ and so on refer to the corresponding counterparts for the previous iteration.
             # if it_prev, it_prev_... are present the step is skipped for the first iteration.
             diff: "cd {hw} && diff -r -N {it_prev_} {it_last_}"
@@ -259,6 +261,17 @@ process:
 ```
 
 ## История изменений
+
+### 2023-07-12
+
+* Добавлена переменная с номером текущей итерации. Теперь его можно пробросить в вызываемые команды,
+  например в авто-ревьювер.
+
+### 2023-07-04
+
+* Разрешен баг, когда не скачивались новые работы в "Убунту" 22.04: #2
+* Разнесены пример конфига и собственно конфиг (иначе конфиг иногда пытался закоммитится).
+* Работы из банка теперь на другой учетке: robot-botlegger . Обновили настройки.
 
 ### 2022-06-29
 

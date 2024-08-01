@@ -4,7 +4,8 @@ from __future__ import annotations
 import sys
 import webbrowser
 from enum import Enum
-from typing import Union
+from operator import itemgetter
+from typing import Union, Optional, Any
 
 import questionary
 from loguru import logger
@@ -57,6 +58,14 @@ def choose_to_download(to_download: list[Homework]) -> Union[list[Homework], Int
     return [hw for hw in to_download if str(hw) == chosen_title]
 
 
+def _extract_sla_dict(issue: dict[str, Any]) -> Optional[dict[str, Any]]:
+    # 'settingsId' currently is 8126 for the actual SLA.
+    # To avoid its hardcoding let's simply find the maximal deadline.
+    deadline_getter = itemgetter('failAt')
+    sla_list = issue.sla and sorted(filter(deadline_getter, issue.sla), key=deadline_getter)
+    return sla_list[-1] if sla_list else None
+
+
 def main():
     arg_parser = configure_arg_parser()
     args = arg_parser.parse_args()
@@ -79,7 +88,7 @@ def main():
     should_run = True
     last_processed = None
     while should_run:
-        issues = client.get_issues(user=user)
+        issues = client.get_issues(user=user, mode=args.mode)
         logger.debug(f"Got {len(issues)} homeworks.")
         homeworks = [
             Homework(
@@ -93,6 +102,7 @@ def main():
                 number=number,
                 course=extract_course(issue),
                 transitions=client.get_status_history(issue),
+                sla=_extract_sla_dict(issue)
             )
             for number, issue in enumerate(issues, 1)
         ]

@@ -58,7 +58,7 @@ def compute_style(homework: Homework, last_processed=None):  # TODO: consider mo
 
 
 def setup_table(homeworks: list[Homework], title: Optional[str] = None) -> Table:
-    table = Table(title=title, box=box.MINIMAL_HEAVY_HEAD,)
+    table = Table(title=title, box=box.MINIMAL_HEAVY_HEAD)
     table.add_column("#", justify="right", style="green")
     min_ticket_width = max(len(hw.issue_url) for hw in homeworks) if homeworks else None
     table.add_column("ticket", min_width=min_ticket_width)

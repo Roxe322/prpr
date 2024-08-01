@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import IntEnum
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Any
 
 from loguru import logger
 from transliterate import slugify
@@ -62,6 +62,7 @@ class Homework:
         number: int,  # the ordinal number in of all one's tickets sorted by issue key
         course: str,  # e.g. "backend-developer"
         transitions: Optional[list[StatusTransition]] = None,
+        sla: Optional[dict[str, Any]] = None,
     ):
         self.number = number
         self.lesson_name = self._extract_lesson_name(lesson_name)
@@ -76,6 +77,20 @@ class Homework:
         self.course = course
         self._iteration: Optional[int] = StatusTransition.compute_iteration(transitions)
         self.last_opened: Optional[datetime] = StatusTransition.compute_last_opened(transitions)
+        self.sla: Optional[SLA] = sla and SLA(
+            id_=sla['id'],
+            started_at=parse_datetime(sla['startedAt']),
+            fail_at=parse_datetime(sla['failAt']),
+        )
+
+
+    @staticmethod
+    def _extract_lesson_name(lesson_name):
+        pattern = r'спринта: (.+)$'
+        match = re.search(pattern, lesson_name)
+        if match:
+            return match.group(1)
+        return lesson_name
 
 
     @staticmethod
@@ -97,7 +112,7 @@ class Homework:
 
     @property
     def deadline(self) -> Optional[datetime]:
-        return self._compute_deadline(self.status_updated, self.status, self.last_opened)
+        return self._compute_deadline(self.status_updated, self.status, self.last_opened, self.sla and self.sla.fail_at)
 
     @property
     def deadline_string(self) -> Optional[str]:
@@ -168,11 +183,15 @@ class Homework:
 
     @staticmethod
     def _compute_deadline(
-        status_updated: Optional[datetime], status: Status, last_opened: Optional[datetime] = None
+        status_updated: Optional[datetime],
+        status: Status,
+        last_opened: Optional[datetime] = None,
+        sla_fail_at: Optional[datetime] = None,
     ) -> Optional[datetime]:
         if status in {Status.OPEN, Status.IN_REVIEW}:
             if updated := (last_opened or status_updated):
-                return updated + timedelta(days=1)
+                computed = updated + timedelta(days=1)
+                return min(computed, sla_fail_at) if sla_fail_at else computed
         return None
 
     def __str__(self) -> str:
@@ -214,7 +233,7 @@ class Homework:
 
     @staticmethod
     def order_key(homework: Homework) -> Tuple[int, datetime]:
-        return homework.status, homework.status_updated
+        return homework.status, homework.deadline
 
     @property
     def second_name_slug(self):
@@ -250,3 +269,10 @@ class StatusTransition:
         opened_timestamps = [t.timestamp for t in transitions if t.to == Status.OPEN]
         last_opened = opened_timestamps[-1] if opened_timestamps else None
         return last_opened
+
+
+@dataclass
+class SLA:
+    id_: str
+    started_at: datetime
+    fail_at: datetime

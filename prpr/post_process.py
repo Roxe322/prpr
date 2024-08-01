@@ -85,11 +85,12 @@ def _interpolate(command_template: str, result_last: DownloadedResult) -> str:
     return _translate(
         command_template,
         {
-            "{hw}": result_last.homework_directory.as_posix(),
-            "{it_last}": result_last.iteration_directory.as_posix(),
-            "{it_last_}": result_last.iteration_directory_relative_to_homework_directory.as_posix(),
-            "{it_last_zip}": result_last.zipfile.as_posix(),
-            "{it_last_zip_}": result_last.zipfile_relative_to_homework_directory.as_posix(),
+            "{hw}": str(result_last.homework_directory),
+            "{it_last}": str(result_last.iteration_directory),
+            "{it_last_}": str(result_last.iteration_directory_relative_to_homework_directory),
+            "{it_last_zip}": str(result_last.zipfile),
+            "{it_last_zip_}": str(result_last.zipfile_relative_to_homework_directory),
+            "{it_last_number}": str(result_last.iteration),
         },
     )
 
@@ -98,10 +99,10 @@ def _interpolate_previous(command: str, result_prev: DownloadedResult) -> str:
     return _translate(
         command,
         {
-            "{it_prev}": result_prev.iteration_directory.as_posix(),
-            "{it_prev_}": result_prev.iteration_directory_relative_to_homework_directory.as_posix(),
-            "{it_prev_zip}": result_prev.zipfile.as_posix(),
-            "{it_prev_zip_}": result_prev.zipfile_relative_to_homework_directory.as_posix(),
+            "{it_prev}": str(result_prev.iteration_directory),
+            "{it_prev_}": str(result_prev.iteration_directory_relative_to_homework_directory),
+            "{it_prev_zip}": str(result_prev.zipfile),
+            "{it_prev_zip_}": str(result_prev.zipfile_relative_to_homework_directory),
         },
     )
 
