@@ -93,14 +93,6 @@ class Homework:
         return lesson_name
 
 
-    @staticmethod
-    def _extract_lesson_name(lesson_name):
-        pattern = r'спринта: (.+)$'
-        match = re.search(pattern, lesson_name)
-        if match:
-            return match.group(1)
-        return lesson_name
-
     @property
     def iteration(self):
         if cached := self._iteration:
