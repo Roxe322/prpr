@@ -9,6 +9,7 @@ from typing import Union, Optional, Any
 
 import questionary
 from loguru import logger
+from yandex_tracker_client.objects import Resource
 
 from prpr.cli import DOWNLOAD, INTERACTIVE, POST_PROCESS, configure_arg_parser
 from prpr.config import get_config
@@ -58,7 +59,7 @@ def choose_to_download(to_download: list[Homework]) -> Union[list[Homework], Int
     return [hw for hw in to_download if str(hw) == chosen_title]
 
 
-def _extract_sla_dict(issue: dict[str, Any]) -> Optional[dict[str, Any]]:
+def _extract_sla_dict(issue: Resource) -> Optional[Resource]:
     # 'settingsId' currently is 8126 for the actual SLA.
     # To avoid its hardcoding let's simply find the maximal deadline.
     deadline_getter = itemgetter('failAt')
