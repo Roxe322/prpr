@@ -5,7 +5,7 @@ import sys
 import webbrowser
 from enum import Enum
 from operator import itemgetter
-from typing import Union, Optional, Any
+from typing import Union, Optional
 
 import questionary
 from loguru import logger
@@ -120,7 +120,11 @@ def main():
         )
         sorted_homeworks = sort_homeworks(filtered_homeworks)
         print_issue_table(
-            sorted_homeworks, last=DISPLAYED_TAIL_LENGTH, last_processed=last_processed, title=table_title,
+            sorted_homeworks,
+            mode=args.mode,
+            last=DISPLAYED_TAIL_LENGTH,
+            last_processed=last_processed,
+            title=table_title,
         )
         if not args.download and args.open:
             open_pages_for_first(sorted_homeworks)
