@@ -1,12 +1,14 @@
 import re
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 
 from loguru import logger
 from rich import box
 from rich.console import Console
 from rich.table import Table
 
+from prpr.config import get_config
+from prpr.filters import FilterMode
 from prpr.homework import Homework, Status
 
 DISPLAYED_TAIL_LENGTH = None
@@ -30,11 +32,29 @@ def _split_student_info(student: str) -> tuple[str, str]:
         student_email = ""
     return student_name, student_email
 
-def print_issue_table(homeworks: list[Homework], last=None, last_processed=None, title: Optional[str] = None):
+def retrieve_style(style_key, default=""):
+    config = get_config()
+    table_appearance = config.get("table_appearance")
+    if table_appearance is None:
+        table_appearance = {}
+    value = table_appearance.get(style_key, default)
+
+    if style_key == "box_style" and isinstance(value, str):
+        try:
+            module_name, attribute_name = value.split('.')
+            if module_name == 'box':
+                value = getattr(box, attribute_name)
+        except (ValueError, AttributeError):
+            value = default
+
+    return value
+
+def print_issue_table(homeworks: list[Homework], mode: FilterMode, last=None, last_processed=None, title: Optional[str] = None):
     if not homeworks:
         logger.warning("No homeworks for chosen filter combination.")
         return
-    table = setup_table(homeworks, title)
+    is_short_table = mode in {FilterMode.STANDARD, FilterMode.OPEN}
+    table = setup_table(homeworks, is_short_table, title)
 
     start_from = -last if last else last
     for table_number, homework in enumerate(homeworks[start_from:], 1):
@@ -47,12 +67,19 @@ def print_issue_table(homeworks: list[Homework], last=None, last_processed=None,
         # Construct the issue URL with lesson name if it exists
         issue_url_with_lesson = homework.issue_url
         if homework.lesson_name:
-            issue_url_with_lesson += f"\n[green]{homework.lesson_name}"
+            lesson_name_style = retrieve_style("lesson_name_style")
+            issue_url_with_lesson += (f"\n{lesson_name_style}"
+                                      f"{homework.lesson_name}")
 
-        row_columns = (  # TODO: Move to Homework
+        row_columns = [  # TODO: Move to Homework
             str(table_number),
             issue_url_with_lesson,
-            # str(homework.number), # TODO: Лишняя колонка если берем список только используемых работ с сервера
+            ]
+
+        if not is_short_table:
+            row_columns.append(str(homework.number))
+
+        row_columns += [
             str(homework.problem),
             homework.iteration and str(homework.iteration),
             student_display,
@@ -61,7 +88,7 @@ def print_issue_table(homeworks: list[Homework], last=None, last_processed=None,
             homework.deadline_string,
             homework.left,
             homework.updated_string,
-        )
+        ]
         table.add_row(
             *row_columns,
             style=compute_style(homework, last_processed=last_processed),
@@ -82,12 +109,13 @@ def compute_style(homework: Homework, last_processed=None):  # TODO: consider mo
         return "dim"
 
 
-def setup_table(homeworks: list[Homework], title: Optional[str] = None) -> Table:
-    table = Table(title=title, box=box.MINIMAL_HEAVY_HEAD)
-    table.add_column("#", justify="right", style="green")
+def setup_table(homeworks: list[Homework], is_short_table: bool, title: Optional[str] = None) -> Table:
+    table = Table(title=title, box=retrieve_style("box_style", default=box.MINIMAL_HEAVY_HEAD))
+    table.add_column("#", justify="right", style=retrieve_style("number_style"))
     min_ticket_width = max(len(hw.issue_url) for hw in homeworks) if homeworks else None
     table.add_column("ticket", min_width=min_ticket_width)
-    # table.add_column("no", justify="right") # TODO: Лишняя колонка если берем список только используемых работ с сервера
+    if not is_short_table:
+        table.add_column("no", justify="right")
     table.add_column("pr", justify="right")
     table.add_column("i")
     table.add_column("student")
@@ -96,10 +124,12 @@ def setup_table(homeworks: list[Homework], title: Optional[str] = None) -> Table
     table.add_column("deadline", justify="right")
     table.add_column("left", justify="right")
     table.add_column("updated")
-    table.header_style = "yellow"  # Стиль текста в заголовке таблице (первой строке)
-    table.border_style = "dim blue"  # Стиль границ таблицы
-    table.title_style = "bold blue" # Стиль текста в заголовке таблицы, My Praktikum Review Tickets
-    table.pad_edge = False  # меньше расстояние между границами
+    table.header_style = retrieve_style("header_style")  # Стиль текста в заголовке таблице (первой строке)
+    table.border_style = retrieve_style("border_style")  # Стиль границ таблицы
+    table.title_style = retrieve_style("title_style") # Стиль текста в заголовке таблицы, My Praktikum Review Tickets
+
+    # меньше расстояние между границами если False. True по умолчанию, оставил дефолт как было, чтобы не портить внешний вид кто не задал в настройках
+    table.pad_edge = retrieve_style("pad_edge", True)
     # Другие стили тут https://rich.readthedocs.io/en/stable/tables.html#table-options
     # TODO: column count should always match tuple length; configure together.
     return table
