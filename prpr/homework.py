@@ -83,7 +83,6 @@ class Homework:
             fail_at=parse_datetime(sla['failAt']),
         )
 
-
     @staticmethod
     def _extract_lesson_name(lesson_name):
         pattern = r'спринта: (.+)$'
@@ -91,7 +90,6 @@ class Homework:
         if match:
             return match.group(1)
         return lesson_name
-
 
     @property
     def iteration(self):

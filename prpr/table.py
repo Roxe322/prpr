@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 from typing import Optional
 
@@ -10,6 +11,24 @@ from prpr.homework import Homework, Status
 
 DISPLAYED_TAIL_LENGTH = None
 
+def _split_student_info(student: str) -> tuple[str, str]:
+    """
+    Split the student's information into name and email.
+
+    Args:
+        student (str): The student's information in the format 'name lastname (email)'.
+
+    Returns:
+        tuple[str, str]: A tuple containing the student's name and email.
+    """
+    if match := re.match(r"^(?P<name>.*?) \((?P<email>.*)\)$", student):
+        # e.g. 'name lastname (email)'
+        student_name = match.group("name").strip()
+        student_email = match.group("email").strip()
+    else:
+        student_name = student
+        student_email = ""
+    return student_name, student_email
 
 def print_issue_table(homeworks: list[Homework], last=None, last_processed=None, title: Optional[str] = None):
     if not homeworks:
@@ -19,18 +38,24 @@ def print_issue_table(homeworks: list[Homework], last=None, last_processed=None,
 
     start_from = -last if last else last
     for table_number, homework in enumerate(homeworks[start_from:], 1):
+        # Construct the student_display with name and email on separate lines if email exists
+        student_name, student_email = _split_student_info(homework.student)
+        student_display = student_name
+        if student_email:
+            student_display += f"\n{student_email}"
+
+        # Construct the issue URL with lesson name if it exists
+        issue_url_with_lesson = homework.issue_url
+        if homework.lesson_name:
+            issue_url_with_lesson += f"\n[green]{homework.lesson_name}"
+
         row_columns = (  # TODO: Move to Homework
             str(table_number),
-            homework.issue_url
-            + (
-                "\n" + "[green]" + homework.lesson_name
-                if homework.lesson_name
-                else ""
-            ),
+            issue_url_with_lesson,
             # str(homework.number), # TODO: Лишняя колонка если берем список только используемых работ с сервера
             str(homework.problem),
             homework.iteration and str(homework.iteration),
-            homework.student,
+            student_display,
             homework.cohort,
             homework.pretty_status,
             homework.deadline_string,
