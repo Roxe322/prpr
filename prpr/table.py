@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import Optional, TypeVar, cast
+from typing import Optional, cast
 
 from loguru import logger
 from rich import box
@@ -14,7 +14,6 @@ from prpr.homework import Homework, Status
 
 DISPLAYED_TAIL_LENGTH = None
 
-T = TypeVar('T')
 def _split_student_info(student: str) -> tuple[str, str]:
     """
     Split the student's information into name and email.
