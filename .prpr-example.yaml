@@ -19,7 +19,7 @@ table_appearance:
     number_style: "green"
     pad_edge: False
     leading: False # empty line between rows
-    box_style: box.MINIMAL_HEAVY_HEAD  other styles # https://rich.readthedocs.io/en/stable/appendix/box.html
+    box_style: box.MINIMAL_HEAVY_HEAD  # other styles # https://rich.readthedocs.io/en/stable/appendix/box.html
     padding: "0, 1" # An integer 1, 2, or 4 values to set the padding on cells. "0, 1" by default
 
 
