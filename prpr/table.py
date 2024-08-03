@@ -46,7 +46,9 @@ def retrieve_box_style(table_appearance, style_key, default):
     try:
         return getattr(box, value)
     except (ValueError, AttributeError):
-        logger.warning(f"Box style '{value}' from config not found. used default")
+        logger.warning(f"Box style '{value}' from config not found in rich. used default."
+                       f"\n For other styles see https://rich.readthedocs.io/en/stable/appendix/box.html"
+                       f"\n Use it in config without 'box.' prefix")
         return default
 
 

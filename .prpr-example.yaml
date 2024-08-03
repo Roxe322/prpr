@@ -16,11 +16,11 @@ table_appearance:
     title_style: "bold blue"
     lesson_name_style: "[green]" # square brackets because it's inside a string
     email_style: "[green]"
-    number_style: "green"
+    number_style: "magenta"
     pad_edge: False
-    leading: False # empty line between rows
-    box_style: box.MINIMAL_HEAVY_HEAD  # other styles # https://rich.readthedocs.io/en/stable/appendix/box.html
-    padding: "0, 1" # An integer 1, 2, or 4 values to set the padding on cells. "0, 1" by default
+    leading: True
+    box_style: "MINIMAL" # https://rich.readthedocs.io/en/stable/appendix/box.html
+    padding: "0, 0" # An integer 1, 2, or 4 values to set the padding on cells.
 
 
 component_suffixes:  # suffixes for cohort definition according to course
