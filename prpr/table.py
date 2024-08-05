@@ -33,13 +33,13 @@ def _split_student_info(student: str) -> tuple[str, str]:
         student_email = ""
     return student_name, student_email
 
-def retrieve_table_appearance():
+def retrieve_table_appearance() -> dict[str, str]:
     config = get_config()
     table_appearance = config.get("table_appearance") or {}
     return table_appearance
 
 
-def retrieve_box_style(table_appearance, style_key, default):
+def retrieve_box_style(table_appearance: dict[str, str], style_key: str, default: box.Box) -> box.Box:
     value = table_appearance.get(style_key, default)
     if not isinstance(value, str):
         return value
@@ -52,7 +52,7 @@ def retrieve_box_style(table_appearance, style_key, default):
         return default
 
 
-def retrieve_padding(table_appearance, style_key: str, default: PaddingDimensions) -> PaddingDimensions:
+def retrieve_padding(table_appearance: dict[str, str], style_key: str, default: PaddingDimensions) -> PaddingDimensions:
     value = table_appearance.get(style_key, default)
     if isinstance(value, str):
         return Padding.unpack(get_padding(value))
@@ -138,13 +138,13 @@ def setup_table(homeworks: list[Homework], table_appearance: dict, is_short_tabl
     table.add_column("deadline", justify="right")
     table.add_column("left", justify="right")
     table.add_column("updated")
-    table.leading = table_appearance.get("leading", False)
-    table.padding = retrieve_padding(table_appearance,"padding", default=(0, 1))
-    table.header_style = table_appearance.get("header_style", "")  # Стиль текста в заголовке таблице (первой строке)
-    table.border_style = table_appearance.get("border_style", "")  # Стиль границ таблицы
-    table.title_style = table_appearance.get("title_style", "") # Стиль текста в заголовке таблицы, My Praktikum Review Tickets
+    table.leading = table_appearance.get("leading", False)  # add leading space between columns if True
+    table.padding = retrieve_padding(table_appearance,"padding", default=(0, 1))  # padding between columns and rows
+    table.header_style = table_appearance.get("header_style", "")  # Style of header (first row)
+    table.border_style = table_appearance.get("border_style", "")  # Style of borders
+    table.title_style = table_appearance.get("title_style", "") # Style of title (My Praktikum Review Tickets)
 
-    # Меньше расстояние между границами если False. True по умолчанию, оставил дефолт как было, чтобы не портить внешний вид кто не задал в настройках
+    # less padding around edge of table if False. True by default.
     table.pad_edge = table_appearance.get("pad_edge", True)
     # Другие стили тут https://rich.readthedocs.io/en/stable/tables.html#table-options
     # TODO: column count should always match tuple length; configure together.
