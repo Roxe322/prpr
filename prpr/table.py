@@ -146,6 +146,6 @@ def setup_table(homeworks: list[Homework], table_appearance: dict, is_short_tabl
 
     # less padding around edge of table if False. True by default.
     table.pad_edge = table_appearance.get("pad_edge", True)
-    # Другие стили тут https://rich.readthedocs.io/en/stable/tables.html#table-options
+    # other table options see https://rich.readthedocs.io/en/stable/tables.html#table-options
     # TODO: column count should always match tuple length; configure together.
     return table
