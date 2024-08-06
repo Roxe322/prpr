@@ -5,6 +5,24 @@ startrek_token: your_token_here
 free_work_owner: robot-botlegger
 month_start: 16  # Meaning closed tickets are grouped by May 16-June 15, June 16-July 16 and so on.
 
+# example color scheme
+
+# https://rich.readthedocs.io/en/stable/tables.html#table-options
+# colors: https://rich.readthedocs.io/en/stable/appendix/colors.html#appendix-colors
+# comment or delete any line for default value
+table_appearance:
+    header_style: "yellow"
+    border_style: "dim blue"
+    title_style: "bold blue"
+    lesson_name_style: "[green]" # square brackets because it's inside a string
+    email_style: "[green]"
+    number_style: "magenta"
+    pad_edge: False
+    leading: True
+    box_style: "MINIMAL" # https://rich.readthedocs.io/en/stable/appendix/box.html
+    padding: "0, 0" # An integer 1, 2, or 4 values to set the padding on cells.
+
+
 component_suffixes:  # suffixes for cohort definition according to course
   backend-developer: ''
   python-developer-plus: '+'

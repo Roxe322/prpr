@@ -5,10 +5,11 @@ import sys
 import webbrowser
 from enum import Enum
 from operator import itemgetter
-from typing import Union, Optional, Any
+from typing import Union, Optional
 
 import questionary
 from loguru import logger
+from yandex_tracker_client.objects import Resource
 
 from prpr.cli import DOWNLOAD, INTERACTIVE, POST_PROCESS, configure_arg_parser
 from prpr.config import get_config
@@ -58,7 +59,7 @@ def choose_to_download(to_download: list[Homework]) -> Union[list[Homework], Int
     return [hw for hw in to_download if str(hw) == chosen_title]
 
 
-def _extract_sla_dict(issue: dict[str, Any]) -> Optional[dict[str, Any]]:
+def _extract_sla_dict(issue: Resource) -> Optional[Resource]:
     # 'settingsId' currently is 8126 for the actual SLA.
     # To avoid its hardcoding let's simply find the maximal deadline.
     deadline_getter = itemgetter('failAt')
@@ -119,7 +120,11 @@ def main():
         )
         sorted_homeworks = sort_homeworks(filtered_homeworks)
         print_issue_table(
-            sorted_homeworks, last=DISPLAYED_TAIL_LENGTH, last_processed=last_processed, title=table_title,
+            sorted_homeworks,
+            mode=args.mode,
+            last=DISPLAYED_TAIL_LENGTH,
+            last_processed=last_processed,
+            title=table_title,
         )
         if not args.download and args.open:
             open_pages_for_first(sorted_homeworks)

@@ -41,6 +41,19 @@ python3 -m prpr.main
 alias prpr='cd /path/to/dir/prpr/ && source venv/bin/activate && python -m prpr.main'
 ```
 
+Еще можно вместо алиаса создать функцию в .bashrc:
+
+```shell
+prpr() {
+  local original_dir=$(pwd)
+  cd ~/prpr/ || return
+  source venv/Scripts/activate || return
+  python -m prpr.main "$@"
+  deactivate >/dev/null || return
+  cd "$original_dir" || return
+}
+```
+
 ### Опции запуска
 
 Доступна встроенная справка:
@@ -261,6 +274,10 @@ process:
 ```
 
 ## История изменений
+
+### 2024-08-01
+
+* Добавлена возможность гибко настроить цвета и внешний вид некоторых элементов таблицы в терминале.
 
 ### 2023-07-12
 
