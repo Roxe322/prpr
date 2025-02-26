@@ -214,7 +214,7 @@ class Homework:
     @property
     def revisor_url(self) -> str:
         if m := re.search(
-            r"==(?P<url>https://pra(c|k)ti(k|c)um-admin\.yandex-team\.ru/office/revisor-review/(\d+)/(\w+))\b",
+            r"==(?P<url>https://(?:admin\.praktikum|pra(c|k)ti(k|c)um-admin)\.yandex-team\.ru/office/revisor-review/(\d+)/(\w+))\b",
             self.description,
         ):
             return m.group("url")
